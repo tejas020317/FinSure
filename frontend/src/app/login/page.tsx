@@ -36,7 +36,11 @@ export default function LoginPage() {
       {/* Dark mode FloatingLines background */}
       {isDark && (
         <div className="absolute inset-0 z-0 transition-opacity duration-1000 opacity-100">
-          <FloatingLines />
+          <FloatingLines
+            linesGradient={{ start: "rgba(255,255,255,0)", end: "rgba(255,255,255,0.1)" }}
+            topWavePosition={{ top: "10%", left: "0" }}
+            middleWavePosition={{ top: "50%", left: "0" }}
+          />
         </div>
       )}
       {isDark && <div className="absolute inset-0 z-0 bg-transparent pointer-events-none" />}
@@ -52,11 +56,11 @@ export default function LoginPage() {
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md p-8 sm:p-10 card shadow-xl animate-in fade-in slide-in-from-bottom-8 duration-500 rounded-3xl mx-4">
         <div className="flex flex-col items-center mb-8 gap-2">
-          <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-2 shadow-sm ring-1 ring-primary/20">
-            <LogIn className="h-8 w-8" />
+          <div className="mb-4">
+            <img src="/logo.png" alt="FinSure Logo" className="h-24 w-24 rounded-full object-cover dark:invert drop-shadow-md" />
           </div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-500 pb-1">
-            BankLoan
+          <h1 className="text-4xl font-bold text-black dark:text-white pb-1">
+            FinSure
           </h1>
           <p className="text-muted-foreground text-sm font-medium">Core Banking Portal</p>
         </div>

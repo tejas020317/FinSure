@@ -23,7 +23,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Floating background applied strictly when dark mode */}
       {isDark && (
         <div className="absolute inset-0 z-0 transition-opacity duration-1000 opacity-100">
-          <FloatingLines />
+          <FloatingLines
+            linesGradient={{ start: "rgba(255,255,255,0)", end: "rgba(255,255,255,0.1)" }}
+            topWavePosition={{ top: "10%", left: "0" }}
+            middleWavePosition={{ top: "50%", left: "0" }}
+          />
         </div>
       )}
       {/* Subtle overlay */}

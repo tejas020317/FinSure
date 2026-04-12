@@ -318,6 +318,10 @@ export const reportApi = {
       `/reports/customer-summary/${customerId}/pdf`,
       `customer_${customerId}_summary.pdf`,
     ),
+  getCustomerSummaryJSON: (customerId: number) =>
+    apiFetch<{ success: boolean; data: any }>(
+      `/reports/customer-summary/${customerId}`,
+    ),
 };
 
 export interface LoanLedgerReport {

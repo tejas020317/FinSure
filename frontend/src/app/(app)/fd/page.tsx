@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Plus, Search, Eye, Trash2, FileText, CheckCircle, Calculator } from "lucide-react";
 import { fdApi, customerApi, FD, Customer, FDMaturity } from "@/lib/api";
 import { toast } from "@/components/Toast";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const EMPTY_FD = {
   customer_id: "", deposit_amount: "", interest_rate: "", interest_type: "simple",
@@ -31,6 +33,7 @@ export default function FDPage() {
   const [saving, setSaving] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   const load = () => {
     setLoading(true);
@@ -173,14 +176,22 @@ export default function FDPage() {
                   <td className="p-4 align-middle font-medium">{new Date(f.maturity_date).toLocaleDateString("en-IN")}</td>
                   <td className="p-4 align-middle font-bold text-violet-500 dark:text-violet-400">{fmt(f.maturity_amount)}</td>
                   <td className="p-4 align-middle font-semibold text-emerald-600 dark:text-emerald-400">+{fmt(f.interest_earned)}</td>
-                  <td className="p-4 align-middle text-center w-[180px]">
-                    <div className="flex justify-center">
+                  <td className="p-4 align-middle text-center w-[200px]">
+                    <div className="flex justify-center flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="hover:scale-[1.02] transition-all"
+                        onClick={() => router.push(`/fds/${f.fd_id}`)}
+                      >
+                        View →
+                      </Button>
                       <button 
-                        className="inline-flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white"
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white"
                         onClick={() => handleDelete(f.fd_id)}
                         title="Delete FD"
                       >
-                        <Trash2 className="w-3.5 h-3.5"/>
+                        <Trash2 className="w-4 h-4"/>
                       </button>
                     </div>
                   </td>

@@ -97,14 +97,21 @@ export default function CustomersPage() {
                   <td className="p-4 align-middle">{c.phone ?? "—"}</td>
                   <td className="p-4 align-middle">{c.email ?? "—"}</td>
                   <td className="p-4 align-middle text-muted-foreground">{new Date(c.created_at).toLocaleDateString("en-IN")}</td>
-                  <td className="p-4 align-middle text-center w-[180px]">
-                    <div className="flex items-center justify-center gap-2">
+                  <td className="p-4 align-middle text-center w-[250px]">
+                    <div className="flex items-center justify-center gap-2 flex-row">
+                      <button
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                        onClick={() => window.location.href = `/customers/${c.customer_id}`}
+                        title="View Customer"
+                      >
+                        <Eye className="w-3.5 h-3.5"/> View
+                      </button>
                       <button 
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 bg-white/5 border border-white/10 hover:bg-white/10 text-white"
                         onClick={() => reportApi.downloadCustomerSummary(c.customer_id).catch(e => toast(e.message, "error"))}
                         title="Download PDF Summary"
                       >
-                        <FileText className="w-3.5 h-3.5"/> Summary
+                        <FileText className="w-3.5 h-3.5"/> PDF
                       </button>
                       <button 
                         className="inline-flex items-center justify-center w-7 h-7 rounded-md transition-all duration-200 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white"

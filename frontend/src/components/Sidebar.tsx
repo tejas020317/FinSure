@@ -43,18 +43,14 @@ export default function Sidebar({ isOpen, onClose, isCollapsed }: SidebarProps) 
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-6 py-5 h-16 shrink-0`}>
           {!isCollapsed && (
             <div className="overflow-hidden whitespace-nowrap flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
-                <CreditCard className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-lg font-semibold tracking-tight text-foreground">
-                BankLoan
+              <img src="/logo.png" alt="FinSure Logo" className="h-10 w-10 rounded-full object-cover dark:invert drop-shadow-sm" />
+              <div className="text-2xl font-bold tracking-tight text-black dark:text-white">
+                FinSure
               </div>
             </div>
           )}
           {isCollapsed && (
-            <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
-              <CreditCard className="h-4 w-4 text-primary" />
-            </div>
+            <img src="/logo.png" alt="FinSure Logo" className="h-10 w-10 rounded-full object-cover dark:invert drop-shadow-sm" />
           )}
           {!isCollapsed && (
             <button onClick={onClose} className="md:hidden text-muted-foreground hover:text-foreground shrink-0">
