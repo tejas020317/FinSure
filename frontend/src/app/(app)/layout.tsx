@@ -2,21 +2,43 @@
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topnav from "@/components/Topnav";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import FloatingLines from "@/components/FloatingLines";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/lib/auth";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const { token, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const pathname = usePathname();
   const { theme, systemTheme } = useTheme();
   
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  useEffect(() => {
+    if (!loading && !token) router.replace("/login");
+  }, [loading, token, router]);
+
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = mounted && currentTheme === 'dark';
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">Redirecting to loginâ€¦</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex h-screen w-full bg-background overflow-hidden">

@@ -2,17 +2,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import FloatingLines from "@/components/FloatingLines";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { toast } from "@/components/Toast";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loading } = useAuth();
+  const router = useRouter();
+  const { login, loading, token } = useAuth();
   const { theme, setTheme, systemTheme } = useTheme();
   
   const [mounted, setMounted] = useState(false);
@@ -21,9 +25,18 @@ export default function LoginPage() {
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = mounted && currentTheme === 'dark';
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!loading && token) router.replace("/dashboard");
+  }, [loading, token, router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(username, password);
+    try {
+      await login(email, password);
+      toast("Login successful");
+    } catch (err: unknown) {
+      toast(err instanceof Error ? err.message : "Login failed", "error");
+    }
   };
 
   return (
@@ -67,14 +80,14 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
           <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-foreground/80">Username</label>
+            <label className="text-sm font-semibold text-foreground/80">Email</label>
             <input
-              type="text"
+              type="email"
               required
               className="input transition-colors hover:border-primary/50 focus:bg-background h-12"
-              placeholder="e.g. admin"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="e.g. admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           
@@ -107,6 +120,13 @@ export default function LoginPage() {
           >
             {loading ? "Authenticating..." : "Sign In"}
           </button>
+
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            New here?{" "}
+            <Link href="/register" className="font-semibold text-primary hover:underline">
+              Create an account
+            </Link>
+          </p>
         </form>
       </div>
     </div>

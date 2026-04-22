@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role?: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
 }
@@ -28,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const t = localStorage.getItem("token");
     const u = localStorage.getItem("user");
     if (t && u && u !== "undefined") {
@@ -50,15 +52,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await authApi.login(email, password);
-    const tok = res.data.token;
-    const usr = res.data.user as unknown as User;
-    localStorage.setItem("token", tok);
-    localStorage.setItem("user", JSON.stringify(usr));
-    setToken(tok);
-    setUser(usr);
-    router.push("/dashboard");
+    setLoading(true);
+    try {
+      const res = await authApi.login(email, password);
+      const tok = res.data.token;
+      const usr = res.data.user as unknown as User;
+      localStorage.setItem("token", tok);
+      localStorage.setItem("user", JSON.stringify(usr));
+      setToken(tok);
+      setUser(usr);
+      router.replace("/dashboard");
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
+
+  const register = useCallback(
+    async (name: string, email: string, password: string, role?: string) => {
+      setLoading(true);
+      try {
+        const res = await authApi.register(name, email, password, role);
+        const tok = res.data.token;
+        const usr = res.data.user as unknown as User;
+        localStorage.setItem("token", tok);
+        localStorage.setItem("user", JSON.stringify(usr));
+        setToken(tok);
+        setUser(usr);
+        router.replace("/dashboard");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [router],
+  );
 
   const logout = useCallback(() => {
     localStorage.removeItem("token");
@@ -69,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

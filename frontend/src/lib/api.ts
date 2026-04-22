@@ -24,16 +24,40 @@ async function apiFetch<T = unknown>(
       (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, { headers, ...rest });
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new Error(
-      json?.message ?? `Request failed with status ${res.status}`,
-    );
+  let res: Response;
+  try {
+    res = await fetch(`${BASE_URL}${path}`, { headers, ...rest });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Unable to reach API (${BASE_URL}). ${msg}`);
   }
 
-  return json;
+  const text = await res.text();
+
+  let json: unknown = null;
+  if (text) {
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = null;
+    }
+  }
+
+  if (!res.ok) {
+    const apiMessage =
+      json && typeof json === "object" && json !== null
+        ? (json as { message?: unknown }).message
+        : undefined;
+
+    const message =
+      (typeof apiMessage === "string" ? apiMessage : undefined) ??
+      (text ? text : undefined) ??
+      `Request failed with status ${res.status}`;
+
+    throw new Error(message);
+  }
+
+  return (json ?? null) as T;
 }
 
 export async function apiDownload(
@@ -80,6 +104,15 @@ export const authApi = {
     }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
+      auth: false,
+    }),
+  register: (name: string, email: string, password: string, role?: string) =>
+    apiFetch<{
+      success: boolean;
+      data: { token: string; user: Record<string, unknown> };
+    }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password, role }),
       auth: false,
     }),
 };
